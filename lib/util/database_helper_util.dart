@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
+  // ignore: unnecessary_new
   static final DatabaseHelper _instance = new DatabaseHelper.internal();
 
   factory DatabaseHelper() => _instance;
@@ -13,7 +14,7 @@ class DatabaseHelper {
   final String tableName = "NoteTable";
   final String columnId = "id";
   final String columnTitle = "title";
-  final String columnDescription= "description";
+  final String columnDescription = "description";
 
   static Database _db;
 
@@ -36,21 +37,23 @@ class DatabaseHelper {
   }
 
   void _onCreate(Database db, int version) async {
-    await db.execute("CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY, $columnTitle TEXT, $columnDescription TEXT)");
+    await db.execute(
+        "CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY, $columnTitle TEXT, $columnDescription TEXT)");
   }
 
   // CRUD
   // Insert
   Future<int> insertData(ModelClass item) async {
     var dbClient = await db;
-    int result = await dbClient.insert("$tableName", item.toMap());
+    int result = await dbClient.insert(tableName, item.toMap());
     return result;
   }
 
   // Get Items
   Future<List> getAllData() async {
     var dbClient = await db;
-    var result = await dbClient.rawQuery("SELECT * FROM $tableName ORDER BY $columnTitle ASC");
+    var result = await dbClient
+        .rawQuery("SELECT * FROM $tableName ORDER BY $columnTitle ASC");
     return result.toList();
   }
 
@@ -67,7 +70,7 @@ class DatabaseHelper {
     var result = await dbClient
         .rawQuery("SELECT * FROM $tableName WHERE $columnId = $id");
 
-    if (result.length == 0) return null;
+    if (result.isEmpty) return null;
     return ModelClass.fromMap(result.first);
   }
 
